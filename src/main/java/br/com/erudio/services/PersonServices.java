@@ -29,29 +29,18 @@ public class PersonServices {
     PersonMapper mapper;
 
     public List<PersonVO> findAll() {
-    	
-    	logger.info ("Finding all people !"); 
-    	
+        logger.info("Finding all people !");
         var persons = DozerMapper.parseListObject(repository.findAll(), PersonVO.class);
-        persons
-        .stream()
-        .forEach( p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
-        return persons;     
-        
-    }
-    
-    public List <PersonVo>findAll(){
-    	logger.info("Finding all people !");
-    	var persons= DozerMapper.parseListObject(repository,findAll());
-    	
+        persons.forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+        return persons;
     }
 
     public PersonVO findByID(Long id) {
         logger.info("Finding one person");
         
-        var  entity = repository.findById(id)
+        var entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
-        var vo = DozerMapper.parseObject ( entity, PersonVO.class);
+        var vo = DozerMapper.parseObject(entity, PersonVO.class);
         vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
         return vo;
     }
@@ -66,7 +55,6 @@ public class PersonServices {
     }
     
     public PersonVOV2 createV2 (PersonVOV2 person) {
-    	
         logger.info("Creating one person with V2 !");
         var entity = mapper.convertVoToEntityToVo(person);
         var vo = mapper.convertEntityToVo(repository.save(entity));
